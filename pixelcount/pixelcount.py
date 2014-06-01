@@ -73,7 +73,7 @@ class PixelCountCLI:
         parser.add_argument('--channel', '-c', choices=['r', 'g', 'b'],
                             required=True)
         parser.add_argument('--threshold', '-t', type=int, required=True)
-        parser.add_argument('--file', '-f', type=argparse.FileType('r'),
+        parser.add_argument('--file', '-f', type=argparse.FileType('rb'),
                             required=True)
         args = parser.parse_args(input_args)
 
