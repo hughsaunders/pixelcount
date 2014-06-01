@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
+# Standard Library imports
 import argparse
 import sys
 
+# 3rd Party Imports
 from PIL import Image
 from prettytable import PrettyTable
 
@@ -28,6 +30,9 @@ class PixelCount:
         self.image = Image.open(self.image_file)
 
     def count(self):
+        """ Split image into channels, count the pixels that are above
+        a threshold in the selected channel (self.channel_num)
+        """
 
         # Split image into R,G,B channels
         channels = self.image.split()
@@ -46,17 +51,12 @@ class PixelCount:
         above_threshold_percentage = \
             (float(above_threshold_count) / total_pixels) * 100
 
-        # Print results in a table
-        table = PrettyTable(["Item", "Value"])
-        table.add_row(["Total Pixels", total_pixels])
-        table.add_row(["Channel", self.channel_letter])
-        table.add_row(["Threshold", self.threshold])
-        table.add_row(["Pixels in channel %s Above Threshold" %
-                       self.channel_letter, above_threshold_count])
-        table.add_row(["Above Threshold Percentage",
-                      "%.2f%%" % above_threshold_percentage])
-
-        print table
+        # Return dictionary of values
+        return {
+            "total_pixels": total_pixels,
+            "above_threshold_count": above_threshold_count,
+            "above_threshold_percentage": above_threshold_percentage
+        }
 
 
 class PixelCountCLI:
@@ -83,7 +83,18 @@ class PixelCountCLI:
                         threshold=args.threshold)
 
         # Count!
-        pc.count()
+        results = pc.count()
+
+        # Print results in a table
+        table = PrettyTable(["Item", "Value"])
+        table.add_row(["Total Pixels", results["total_pixels"]])
+        table.add_row(["Channel", pc.channel_letter])
+        table.add_row(["Threshold", pc.threshold])
+        table.add_row(["Pixels in channel %s Above Threshold" %
+                       pc.channel_letter, results["above_threshold_count"]])
+        table.add_row(["Above Threshold Percentage",
+                      "%.2f%%" % results["above_threshold_percentage"]])
+        print table
 
 # Run PixeCountCLI if this module is run as a script
 if __name__ == '__main__':
